@@ -39,9 +39,30 @@ namespace HomeTrainingRepository.Models.Services
                 }
 
             }
-        } 
+        }
         #endregion
+        public async Task<List<Person>> SelectById(Guid? id)
+        {
+            using (_context)
+            {
+                try
+                {
 
+                    var persons = await _context.Person.ToListAsync();
+                    return persons;
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                finally
+                {
+                    if (_context.Person != null) _context.Dispose();
+                }
+
+            }
+        }
         #region -Insert-
         public async Task Insert(Person person)
 

@@ -118,8 +118,13 @@ namespace HomeTrainingRepository.Controllers
         }
         #endregion
 
-      
-    }
+        public async Task<IActionResult> Details(Guid? id)
+        { 
+            var p= await _personRepository.SelectById(id);
+            return View(p);
+        }
+
+        }
 
 }
 
