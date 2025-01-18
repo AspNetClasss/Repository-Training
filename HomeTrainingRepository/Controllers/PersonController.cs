@@ -3,6 +3,7 @@ using HomeTrainingRepository.Models.FrameWorks.Contracts;
 using HomeTrainingRepository.Models.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Reflection.Metadata.Ecma335;
 
 namespace HomeTrainingRepository.Controllers
@@ -12,14 +13,14 @@ namespace HomeTrainingRepository.Controllers
     {
         private readonly IPersonRepository _personRepository;
 
-        #region -Ctor-
+        #region [-Ctor-]
         public PersonController(IPersonRepository personRepository)
         {
             _personRepository = personRepository;
         } 
         #endregion
 
-        #region -Index-
+        #region [-Index-]
         public async Task<IActionResult> Index()
         {
             var persons = await _personRepository.Select();
@@ -27,7 +28,7 @@ namespace HomeTrainingRepository.Controllers
         } 
         #endregion
 
-        #region -Create-
+        #region [-Create-]
 
         public IActionResult Create()
         {
@@ -35,7 +36,7 @@ namespace HomeTrainingRepository.Controllers
         } 
         #endregion
 
-        #region -CreatePost-
+        #region [-CreatePost-]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FName,LName")] Person person)
@@ -49,43 +50,38 @@ namespace HomeTrainingRepository.Controllers
         } 
         #endregion
 
-        #region -Edit-
+        #region [-Edit-]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            var p = await _personRepository.Select(id);
 
 
-            return View();
-
-
+            return View(p);
         } 
         #endregion
 
-        #region -EditPost-
+        #region [-EditPost-]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,FName,LName")] Person person)
         {
 
 
-            await _personRepository.Update(person);
+            if (ModelState.IsValid)
+            {
+                await _personRepository.Update(person);
+            }
+        
             return RedirectToAction(nameof(Index));
-
-            //if (ModelState.IsValid)
-            //{
-            // await  _personRepository.Update(person);
-            //    return RedirectToAction(nameof(Index));
-
-            //}
-
         } 
         #endregion
 
-        #region -Delete-
-        public async Task<IActionResult> Delete(Guid? id, Person person)
+        #region [-Delete-]
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
@@ -93,19 +89,18 @@ namespace HomeTrainingRepository.Controllers
             }
 
 
+            var p = await _personRepository.Select(id);
 
 
-
-            return View();
+            return View(p);
         } 
         #endregion
 
-        #region -DeletePost-
+        #region [-DeletePost-]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Person person)
         {
-
             if (person == null)
             {
                 return NotFound();
@@ -118,13 +113,19 @@ namespace HomeTrainingRepository.Controllers
         }
         #endregion
 
+        #region [-Details-]
         public async Task<IActionResult> Details(Guid? id)
-        { 
-            var p= await _personRepository.SelectById(id);
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var p = await _personRepository.Select(id);
             return View(p);
-        }
+        } 
+        #endregion
 
-        }
+    }
 
 }
 

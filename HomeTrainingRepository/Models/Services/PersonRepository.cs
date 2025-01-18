@@ -10,14 +10,14 @@ namespace HomeTrainingRepository.Models.Services
     {
         private readonly ProjectDbContext _context;
 
-        #region -Ctor-
+        #region [-Ctor-]
         public PersonRepository(ProjectDbContext context)
         {
             _context = context;
         } 
         #endregion
 
-        #region -Select-
+        #region [-Select-]
         public async Task<List<Person>> Select()
         {
             using (_context)
@@ -41,15 +41,17 @@ namespace HomeTrainingRepository.Models.Services
             }
         }
         #endregion
-        public async Task<List<Person>> SelectById(Guid? id)
+
+        #region [-Select By Id-]
+        public async Task<Person> Select(Guid? id)
         {
             using (_context)
             {
                 try
                 {
 
-                    var persons = await _context.Person.ToListAsync();
-                    return persons;
+                    var p = await _context.Person.FirstOrDefaultAsync(p => p.Id == id);
+                    return p;
                 }
                 catch (Exception)
                 {
@@ -63,7 +65,9 @@ namespace HomeTrainingRepository.Models.Services
 
             }
         }
-        #region -Insert-
+        #endregion
+
+        #region [-Insert-]
         public async Task Insert(Person person)
 
         {
@@ -96,7 +100,7 @@ namespace HomeTrainingRepository.Models.Services
         } 
         #endregion
 
-        #region -Update-
+        #region [-Update-]
         public async Task Update(Person person)
         {
             using (_context)
@@ -123,7 +127,7 @@ namespace HomeTrainingRepository.Models.Services
         } 
         #endregion
 
-        #region -Delete-
+        #region [-Delete-]
         public async Task Delete(Person person)
         {
             try
